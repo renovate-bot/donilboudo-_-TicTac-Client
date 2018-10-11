@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_delivery_request"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".activities.DeliveryRequestActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:scrollbars="none">
+
+        <!-- Date and hour -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/lblSendDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="0dp"
+                android:layout_marginStart="0dp"
+                android:clickable="false"
+                android:focusable="false"
+                android:inputType="none"
+                android:text="@string/lblSendDate"
+                android:textIsSelectable="false"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtSendDate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:cursorVisible="false"
+                android:ems="10"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+                android:inputType="date"/>
+
+            <TextView
+                android:text="@string/lblCity"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/lblCity"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textColor="@android:color/black"
+                android:layout_marginTop="15dp"/>
+
+            <Spinner
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:id="@+id/spCity"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/rounded_white_rectangle"/>
+
+            <TextView
+                android:id="@+id/lblPackageType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblPackageType"
+                android:fontFamily="sans-serif-smallcaps"
+                android:layout_marginTop="15dp"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtPackageType"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"/>
+
+            <TextView
+                android:id="@+id/lblSenderName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblSenderName"
+                android:fontFamily="sans-serif-smallcaps"
+                android:layout_marginTop="15dp"
+                android:textColor="@android:color/black"/>
+
+
+            <EditText
+                android:id="@+id/txtSenderName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"/>
+
+            <TextView
+                android:id="@+id/lblSenderNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblSenderNumber"
+                android:fontFamily="sans-serif-smallcaps"
+                android:layout_marginTop="15dp"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtSenderNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"/>
+
+            <TextView
+                android:id="@+id/lblSenderAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblSenderAddress"
+                android:fontFamily="sans-serif-smallcaps"
+                android:layout_marginTop="15dp"
+                android:textColor="@android:color/black"/>
+
+
+            <EditText
+                android:id="@+id/txtSenderAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"/>
+
+            <TextView
+                android:id="@+id/lblReceiverName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/lblReceiver"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtReceiverName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"/>
+
+            <TextView
+                android:id="@+id/lblReceiverNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/lblReceiverNumber"
+                android:fontFamily="sans-serif-smallcaps"
+                android:layout_marginTop="15dp"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtReceiverNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="number"/>
+
+            <TextView
+                android:id="@+id/lblReceiverAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/lblReceiverAddress"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtReceiverAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="text"/>
+
+            <TextView
+                android:id="@+id/lblSenderComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="@string/lblComments"
+                android:fontFamily="sans-serif-smallcaps"
+                android:textColor="@android:color/black"/>
+
+            <EditText
+                android:id="@+id/txtSenderComments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textMultiLine"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btnUpdate"
+                    android:layout_width="30dp"
+                    android:layout_height="60dp"
+                    android:layout_weight="1"
+                    android:onClick="saveDeliveryRequest"
+                    android:text="@string/lblStartDeliveryRequest"
+                    android:theme="@style/SubmitButton"
+                    android:fontFamily="sans-serif-smallcaps"/>
+
+                <Button
+                    android:id="@+id/btnCancel"
+                    android:layout_width="30dp"
+                    android:layout_height="60dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_weight="1"
+                    android:onClick="cancel"
+                    android:text="@string/lblCancel"
+                    android:textColor="@color/colorWhite"
+                    android:theme="@style/CancelButton"
+                    android:fontFamily="sans-serif-smallcaps"/>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
