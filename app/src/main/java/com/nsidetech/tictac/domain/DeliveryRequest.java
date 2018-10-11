@@ -26,6 +26,7 @@ public class DeliveryRequest implements Serializable {
     private String deliverNumber;
     private Date receiveDate;
     private String receiveDateStr;
+
     private String requestNumber;
     private String deviceId;
     private String firebaseToken;

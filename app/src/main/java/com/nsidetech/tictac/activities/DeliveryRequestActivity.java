@@ -12,15 +12,11 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.nsidetech.tictac.R;
 import com.nsidetech.tictac.network.NetworkHelper;
@@ -35,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 
 public class DeliveryRequestActivity extends AppCompatActivity {
@@ -100,28 +97,28 @@ public class DeliveryRequestActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
     }
 
-    private void loadCountriesAndCities() {
-        db.collection("countries")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful() && task.getResult() != null)
-                        {
-                            for (QueryDocumentSnapshot document : task.getResult())
-                            {
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                            }
-                        }
-                        else
-                        {
-                            countries = new ArrayList<>();
-                            cities = new ArrayList<>();
-                            Log.w(TAG, "Error getting documents.", task.getException());
-                        }
-                    }
-                });
-    }
+//    private void loadCountriesAndCities() {
+//        db.collection("countries")
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful() && task.getResult() != null)
+//                        {
+//                            for (QueryDocumentSnapshot document : task.getResult())
+//                            {
+//                                Log.d(TAG, document.getId() + " => " + document.getData());
+//                            }
+//                        }
+//                        else
+//                        {
+//                            countries = new ArrayList<>();
+//                            cities = new ArrayList<>();
+//                            Log.w(TAG, "Error getting documents.", task.getException());
+//                        }
+//                    }
+//                });
+//    }
 
     public void saveDeliveryRequest(View view) {
         String requestDate = mRequestDate.getText().toString();
@@ -137,7 +134,9 @@ public class DeliveryRequestActivity extends AppCompatActivity {
         //get phone id
         String deviceId = DeviceManager.getInstance().getDeviceId(this);
 
-        if (validData(requestDate, senderName, senderNumber, senderAddress, receiverName, receiverAddress, senderComments, packageType))
+        String requestNumber = "D-" + UUID.randomUUID().toString();
+
+        if (validData(senderName, senderNumber, senderAddress, receiverName, receiverAddress))
         {
             ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme);
             progressDialog.setIndeterminate(true);
@@ -147,6 +146,7 @@ public class DeliveryRequestActivity extends AppCompatActivity {
             String firebaseToken = FirebaseInstanceId.getInstance().getToken();
 
             Map<String, Object> request = new HashMap<>();
+            request.put("requestNumber", requestNumber);
             request.put("requestDateStr", requestDate);
             request.put("senderName", senderName);
             request.put("senderNumber", senderNumber);
@@ -189,14 +189,11 @@ public class DeliveryRequestActivity extends AppCompatActivity {
         }
     }
 
-    private boolean validData(String requestDate,
-                              String senderName,
+    private boolean validData(String senderName,
                               String senderNumber,
                               String senderAddress,
                               String receiverName,
-                              String receiverAddress,
-                              String senderComments,
-                              String packageType) {
+                              String receiverAddress) {
         boolean isValid = true;
 
         if (senderName == null || senderName.isEmpty())
