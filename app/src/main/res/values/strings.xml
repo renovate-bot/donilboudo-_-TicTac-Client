@@ -18,11 +18,12 @@
     <string name="lblStartDeliveryRequest">Demander une livraison</string>
     <string name="lblCancelDeliveryRequest">Annuler la demande</string>
     <string name="lblCancel">Annuler</string>
+    <string name="lblPrevious">Précédent</string>
 
     <string name="lblSenderName">Nom et prénom du demandeur de la course:</string>
     <string name="lblSenderNumber">Numéro du demandeur de la course:</string>
-    <string name="lblSenderAddress">Lieu de récupération du colis:</string>
-    <string name="lblReceiverAddress">Lieu de livraison du colis:</string>
+    <string name="lblSenderAddress">Détails du lieu de récupération:</string>
+    <string name="lblReceiverAddress">Détails du lieu de livraison:</string>
     <string name="lblReceiverNumber">Numéro du receveur:</string>
 
     <string name="lblSenderReferences">Références de l\'envoyeur:</string>
@@ -39,7 +40,6 @@
     <string name="requestSuccessfullyCancel">Votre demande de livraison a été bien annulée</string>
     <string name="noRequestedDeliveries">Vous n\'avez pas de demandes de livraison</string>
     <string name="fieldCannotBeEmpty">Ne peut pas être vide</string>
-
 
     <string name="lblBadConnexionInfo">Vérifier les informations de connexion</string>
     <string name="lblEndDelivery">Terminer la course</string>
@@ -69,4 +69,29 @@
     <string name="msgCancelDeliveryRequest">Voulez vous vraiment annuler la demande?</string>
     <string name="lblYes">Oui</string>
     <string name="lblNo">Non</string>
+    <string name="title_activity_delivery">TicTac</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="lieu_de_depart">Lieu de depart</string>
+    <string name="selectionner_sur_la_map">Sélectionner sur la Map</string>
+    <string name="lieu_d_arrive">Lieu d\'arrivé</string>
+    <string name="lbl_continuer">CONTINUER</string>
+    <string name="la_distance_est_de">La distance est de:</string>
+    <string name="determinons_la_distance_de_votre_course">Déterminons la distance de votre course</string>
+    <string name="title_activity_sender">Informations de l\'envoyeur</string>
+    <string name="title_activity_receiver_info">Informations du receveur</string>
+    <string name="veuiller_entrer_les_informations_de_l_envoyeur">Veuiller entrer les informations de l\'envoyeur</string>
+    <string name="veuiller_entrer_les_informations_du_receveur">Veuiller entrer les informations du receveur</string>
+    <string name="title_activity_payment">Mode de paiement</string>
+    <string name="lbl_next">Suivant</string>
+    <string name="lbl_package_type">Dites nous ce que vous voulez envoyer aujourd\'hui</string>
+    <string name="lbl_total_price">Le prix de votre course sera de </string>
+    <string name="lbl_special_price">Veuillez nous contacter pour plus d\'informations</string>
+    <string name="btn_calculate_total_price">Calculer le prix de la course</string>
+    <string name="mobicash">Mobicash</string>
+    <string name="orange_money">Orange Money</string>
+    <string name="cash">Espèces</string>
+    <string name="quel_est_votre_mode_de_paiement">Quel est votre mode de paiement</string>
+    <string name="no_delivery">Vous n\'avez pas de demandes</string>
+    <string name="description">description</string>
+    <string name="lbl_number">Numéro</string>
 </resources>

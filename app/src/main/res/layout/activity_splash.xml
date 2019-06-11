@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="fill_parent"
               android:layout_height="fill_parent"
-              xmlns:tools="http://schemas.android.com/tools"
               android:orientation="vertical"
               tools:context=".activities.SplashActivity">
 
@@ -11,7 +11,8 @@
         android:layout_width="wrap_content"
         android:layout_height="fill_parent"
         android:layout_gravity="center"
-        android:src="@drawable/tic_tac_logo"/>
+        android:contentDescription="@string/description"
+        android:src="@drawable/logo"/>
 
     <!--<TextView android:layout_width="fill_parent"-->
     <!--android:layout_height="wrap_content"-->

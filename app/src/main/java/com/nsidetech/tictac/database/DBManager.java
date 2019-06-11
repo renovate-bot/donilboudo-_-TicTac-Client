@@ -7,8 +7,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-import java.util.UUID;
-
 public class DBManager {
 
     private DatabaseHelper dbHelper;
@@ -37,9 +35,10 @@ public class DBManager {
     }
 
     public Cursor fetch() {
-        String[] columns = new String[] { DatabaseHelper._ID, DatabaseHelper.DEVICE_ID };
+        String[] columns = new String[]{DatabaseHelper._ID, DatabaseHelper.DEVICE_ID};
         Cursor cursor = database.query(DatabaseHelper.TABLE_NAME, columns, null, null, null, null, null);
-        if (cursor != null) {
+        if (cursor != null)
+        {
             cursor.moveToFirst();
         }
         return cursor;

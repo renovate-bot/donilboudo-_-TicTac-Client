@@ -1,15 +1,7 @@
 package com.nsidetech.tictac.util;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.telephony.TelephonyManager;
 
-import com.nsidetech.tictac.activities.SplashActivity;
 import com.nsidetech.tictac.database.DBManager;
 
 import java.util.UUID;
@@ -45,7 +37,11 @@ public class DeviceManager {
         DBManager dbManager = new DBManager(activity);
         dbManager.open();
 
-        String deviceId = dbManager.fetch().getString(1);
+        String deviceId = null;
+        if (dbManager.fetch().getCount() > 0)
+        {
+            deviceId = dbManager.fetch().getString(1);
+        }
 
         if (deviceId == null)
         {

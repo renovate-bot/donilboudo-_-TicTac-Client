@@ -1,6 +1,5 @@
 package com.nsidetech.tictac.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,17 +9,18 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.domain.DeliveryRequest;
+import com.nsidetech.tictac.domain.Delivery;
 import com.nsidetech.tictac.util.DeliveryConstants;
-import com.nsidetech.tictac.util.DeviceManager;
 import com.nsidetech.tictac.util.MessageUtil;
 
 import java.text.SimpleDateFormat;
@@ -38,12 +38,12 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     private EditText mReceiveDate;
     private TextView mReceiveDateLabel;
     private Button mCancelRequest;
+    private ProgressBar mProgressBar;
 
-    private DeliveryRequest selectedDeliveryRequest;
+    private Delivery selectedDelivery;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.FRENCH);
 
-    private FirebaseFirestore db;
     private static final String TAG = "DeliveryDetailsActivity";
 
     @Override
@@ -51,12 +51,9 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_details);
 
-        FirebaseApp.initializeApp(this);
-        db = FirebaseFirestore.getInstance();
-
         //get selected delivery in extra data
         Intent intent = getIntent();
-        selectedDeliveryRequest = (DeliveryRequest) intent.getSerializableExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST);
+        selectedDelivery = (Delivery) intent.getSerializableExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST);
 
         initViews();
 
@@ -78,10 +75,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         mReceiveDateLabel = findViewById(R.id.lblReceiveDate);
 
         mCancelRequest = findViewById(R.id.btnCancelRequest);
+
+        mProgressBar = findViewById(R.id.progressbar);
+        showProgress(false);
     }
 
     private void fillInfo() {
-        String requestStatus = selectedDeliveryRequest.getStatus();
+        String requestStatus = selectedDelivery.getStatus();
         if (DeliveryConstants.WAITING_FOR_APPROVE.equals(requestStatus))
         {
             requestStatus = getResources().getString(R.string.waiting_for_approve);
@@ -100,14 +100,19 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         }
         mStatus.setText(requestStatus);
 
-        mSenderName.setText(selectedDeliveryRequest.getSenderName());
-        mReceiverName.setText(selectedDeliveryRequest.getReceiverName());
-        mReceiverAddress.setText(selectedDeliveryRequest.getReceiverAddress());
-        if (selectedDeliveryRequest.getDeliverName() != null && !selectedDeliveryRequest.getDeliverName().contains("null"))
+        mSenderName.setText(selectedDelivery.getSenderName());
+        mReceiverName.setText(selectedDelivery.getReceiverName());
+
+        String receiverAddress = selectedDelivery.getReceiverAddress();
+        mReceiverAddress.setText(receiverAddress);
+
+        if (selectedDelivery.getDeliverer() != null &&
+                selectedDelivery.getDeliverer().getFullName() != null &&
+                !selectedDelivery.getDeliverer().getFullName().contains("null"))
         {
             mDeliverNameLabel.setVisibility(View.VISIBLE);
             mDeliverName.setVisibility(View.VISIBLE);
-            mDeliverName.setText(selectedDeliveryRequest.getDeliverName());
+            mDeliverName.setText(selectedDelivery.getDeliverer().getFullName());
         }
         else
         {
@@ -115,7 +120,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             mDeliverName.setVisibility(View.GONE);
         }
 
-        if (!selectedDeliveryRequest.getStatus().equals(DeliveryConstants.COMPLETED))
+        if (!selectedDelivery.getStatus().equals(DeliveryConstants.COMPLETED))
         {
             //hide elements
             mReceiveDateLabel.setVisibility(View.GONE);
@@ -125,15 +130,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         {
             mReceiveDateLabel.setVisibility(View.VISIBLE);
             mReceiveDate.setVisibility(View.VISIBLE);
-            //String receiveDate = sdf.format(selectedDeliveryRequest.getReceiveDate());
-            mReceiveDate.setText(selectedDeliveryRequest.getReceiveDateStr());
+            mReceiveDate.setText(selectedDelivery.getCompleteDate());
         }
 
-        //String requestDate = sdf.format(selectedDeliveryRequest.getRequestDate());
-        mDeliveryRequestDate.setText(selectedDeliveryRequest.getRequestDateStr());
-        mRequestNumber.setText(selectedDeliveryRequest.getRequestNumber());
+        mDeliveryRequestDate.setText(selectedDelivery.getRequestDate());
+        mRequestNumber.setText(selectedDelivery.getDeliveryNumber());
 
-        if (!DeliveryConstants.WAITING_FOR_APPROVE.equals(selectedDeliveryRequest.getStatus()))
+        if (!DeliveryConstants.WAITING_FOR_APPROVE.equals(selectedDelivery.getStatus()))
         {
             mCancelRequest.setEnabled(false);
         }
@@ -150,6 +153,14 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private void showProgress(boolean show) {
+        if (mProgressBar != null)
+        {
+            mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressBar.setIndeterminate(show);
+        }
+    }
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK)
@@ -163,20 +174,18 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     }
 
     public void cancelRequest(View view) {
-        ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Un moment...");
-        progressDialog.show();
+        showProgress(true);
 
-        String deviceId = DeviceManager.getInstance().getDeviceId(this);
-
-        db.collection(DeliveryConstants.FIRESTORE_COLLECTION_NAME)
-                .document(deviceId)
-                .update("status", DeliveryConstants.CANCELLED)
+        FirebaseApp.initializeApp(this);
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        DocumentReference ref = db.collection(DeliveryConstants.FIRESTORE_DELIVERIES_COLLECTION_NAME).document(selectedDelivery.getId());
+        ref.update("status", DeliveryConstants.CANCELLED)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         MessageUtil.getInstance().ToastMessage(DeliveryDetailsActivity.this, getResources().getString(R.string.requestSuccessfullyCancel));
+
+                        showProgress(false);
 
                         //go back to menu
                         Intent intent = new Intent(getApplicationContext(), MenuActivity.class);

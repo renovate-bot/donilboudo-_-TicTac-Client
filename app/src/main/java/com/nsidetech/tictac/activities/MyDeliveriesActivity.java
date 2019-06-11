@@ -1,6 +1,5 @@
 package com.nsidetech.tictac.activities;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +9,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.domain.DeliveryRequest;
+import com.nsidetech.tictac.domain.Delivery;
 import com.nsidetech.tictac.network.NetworkHelper;
 import com.nsidetech.tictac.util.DeliveryConstants;
 import com.nsidetech.tictac.util.DeviceManager;
@@ -29,8 +30,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MyDeliveriesActivity extends AppCompatActivity {
-    private ProgressDialog progressDialog;
-    private List<DeliveryRequest> deliveryRequests;
+    private List<Delivery> deliveryRequests;
+    private ProgressBar mProgressBar;
 
     private FirebaseFirestore db;
     private static final String TAG = "MyDeliveriesActivity";
@@ -42,12 +43,13 @@ public class MyDeliveriesActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_deliveries);
         SERVER_ERROR_MESSAGE = getResources().getString(R.string.serverError);
-
-        FirebaseApp.initializeApp(this);
-        db = FirebaseFirestore.getInstance();
+        mProgressBar = findViewById(R.id.progressbar);
 
         if (NetworkHelper.isOnline(this))
         {
+            FirebaseApp.initializeApp(this);
+            db = FirebaseFirestore.getInstance();
+
             deliveryRequests = new ArrayList<>();
             loadMyDeliveries();
         }
@@ -57,26 +59,27 @@ public class MyDeliveriesActivity extends AppCompatActivity {
         }
     }
 
+    private void showProgress(boolean show) {
+        if (mProgressBar != null)
+        {
+            mProgressBar.setVisibility(show ? View.VISIBLE : View.GONE);
+            mProgressBar.setIndeterminate(show);
+        }
+    }
+
     private void loadMyDeliveries() {
         String deviceId = DeviceManager.getInstance().getDeviceId(this);
 
-        progressDialog = new ProgressDialog(this, R.style.AppTheme);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Un moment...");
-        progressDialog.show();
+        showProgress(true);
 
-        db.collection(DeliveryConstants.FIRESTORE_COLLECTION_NAME).whereEqualTo("deviceId", deviceId)
+        db.collection(DeliveryConstants.FIRESTORE_DELIVERIES_COLLECTION_NAME)
+                .whereEqualTo("deviceId", deviceId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful())
                         {
-                            if (progressDialog != null)
-                            {
-                                progressDialog.dismiss();
-                            }
-
                             if (task.getResult() != null && task.getResult().size() > 0)
                             {
                                 for (QueryDocumentSnapshot document : task.getResult())
@@ -84,21 +87,23 @@ public class MyDeliveriesActivity extends AppCompatActivity {
                                     Log.d(TAG, document.getId() + " => " + document.getData());
 
                                     final ObjectMapper mapper = new ObjectMapper();
-                                    final DeliveryRequest request = mapper.convertValue(document.getData(), DeliveryRequest.class);
-                                    deliveryRequests.add(request);
+                                    final Delivery request = mapper.convertValue(document.getData(), Delivery.class);
+                                    if (!request.getStatus().equals(DeliveryConstants.CANCELLED))
+                                    {
+                                        deliveryRequests.add(request);
+                                    }
                                 }
-
                                 initListView();
                             }
                             else
                             {
+                                showProgress(false);
                                 MessageUtil.getInstance().SnackMessage(MyDeliveriesActivity.this, getResources().getString(R.string.noRequestedDeliveries), R.id.activity_my_deliveries);
                             }
                         }
                         else
                         {
                             Log.w(TAG, "Error getting documents.", task.getException());
-
                             MessageUtil.getInstance().ToastMessage(getApplicationContext(), SERVER_ERROR_MESSAGE);
                         }
                     }
@@ -106,20 +111,32 @@ public class MyDeliveriesActivity extends AppCompatActivity {
     }
 
     private void initListView() {
+        showProgress(false);
+
         ListView mDeliveries = findViewById(R.id.lstDeliveries);
-        mDeliveries.setAdapter(new MyDeliveriesAdapter(this, deliveryRequests));
-        mDeliveries.setTextFilterEnabled(true);
-        mDeliveries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                // When clicked, open delivery details and user can finish his delivery
-                DeliveryRequest request = deliveryRequests.get(position);
+        if (deliveryRequests.size() > 0)
+        {
+            mDeliveries.setAdapter(new MyDeliveriesAdapter(this, deliveryRequests));
+            mDeliveries.setTextFilterEnabled(true);
+            mDeliveries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    // When clicked, open delivery details and user can finish his delivery
+                    Delivery request = deliveryRequests.get(position);
 
-                Intent intent = new Intent(getApplicationContext(), DeliveryDetailsActivity.class);
-                intent.putExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST, request);
+                    Intent intent = new Intent(getApplicationContext(), DeliveryDetailsActivity.class);
+                    intent.putExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST, request);
 
-                startActivity(intent);
-            }
-        });
+                    startActivity(intent);
+                }
+            });
+        }
+        else
+        {
+            showProgress(false);
+            mDeliveries.setVisibility(View.GONE);
+            TextView mNoDeliveryLabel = findViewById(R.id.lbl_no_delivery);
+            mNoDeliveryLabel.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
