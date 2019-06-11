@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.nsidetech.tictac">
-    <!--
-         The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
-         Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality.
-    -->
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -19,48 +13,26 @@
         android:roundIcon="@mipmap/logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".activities.PaymentActivity"
-            android:label="@string/title_activity_payment"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-            android:name=".activities.ReceiverInfoActivity"
-            android:label="@string/title_activity_receiver_info"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity
-            android:name=".activities.SenderInfoActivity"
-            android:label="@string/title_activity_sender"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <!--
-             The API key for Google Maps-based APIs is defined as a string resource.
-             (See the file "res/values/google_maps_api.xml").
-             Note that the API key is linked to the encryption key used to sign the APK.
-             You need a different API key for each encryption key, including the release key that is used to
-             sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/.
-        -->
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key"/>
-
-        <activity
-            android:name=".activities.DeliveryDistanceActivity"
-            android:label="@string/title_activity_delivery"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_stat_ic_notification"/>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent2"/>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel"
             android:value="@string/default_notification_channel_id"/>
+
+        <!--<receiverName-->
+            <!--android:name=".util.NetworkChangeReceiver"-->
+            <!--android:label="NetworkChangeReceiver">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE"/>-->
+                <!--<action android:name="android.net.wifi.WIFI_STATE_CHANGED"/>-->
+            <!--</intent-filter>-->
+        <!--</receiverName>-->
 
         <activity android:name=".activities.MenuActivity">
         </activity>
@@ -72,7 +44,7 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".activities.MenuActivity"/>
         </activity>
-        <activity android:name=".activities.PackageInfoActivity">
+        <activity android:name=".activities.DeliveryRequestActivity">
         </activity>
         <activity
             android:name=".activities.DeliveryDetailsActivity"
@@ -86,7 +58,6 @@
             android:label="@string/title_menu">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
@@ -98,6 +69,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>
             </intent-filter>
         </service>
+
     </application>
 
 </manifest>

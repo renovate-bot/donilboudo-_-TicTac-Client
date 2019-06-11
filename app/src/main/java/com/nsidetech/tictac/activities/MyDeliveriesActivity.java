@@ -20,7 +20,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.domain.Delivery;
+import com.nsidetech.tictac.domain.DeliveryRequest;
 import com.nsidetech.tictac.network.NetworkHelper;
 import com.nsidetech.tictac.util.DeliveryConstants;
 import com.nsidetech.tictac.util.DeviceManager;
@@ -45,11 +45,11 @@ public class MyDeliveriesActivity extends AppCompatActivity {
         SERVER_ERROR_MESSAGE = getResources().getString(R.string.serverError);
         mProgressBar = findViewById(R.id.progressbar);
 
+        FirebaseApp.initializeApp(this);
+        db = FirebaseFirestore.getInstance();
+
         if (NetworkHelper.isOnline(this))
         {
-            FirebaseApp.initializeApp(this);
-            db = FirebaseFirestore.getInstance();
-
             deliveryRequests = new ArrayList<>();
             loadMyDeliveries();
         }
@@ -87,11 +87,8 @@ public class MyDeliveriesActivity extends AppCompatActivity {
                                     Log.d(TAG, document.getId() + " => " + document.getData());
 
                                     final ObjectMapper mapper = new ObjectMapper();
-                                    final Delivery request = mapper.convertValue(document.getData(), Delivery.class);
-                                    if (!request.getStatus().equals(DeliveryConstants.CANCELLED))
-                                    {
-                                        deliveryRequests.add(request);
-                                    }
+                                    final DeliveryRequest request = mapper.convertValue(document.getData(), DeliveryRequest.class);
+                                    deliveryRequests.add(request);
                                 }
                                 initListView();
                             }
