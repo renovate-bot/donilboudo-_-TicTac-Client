@@ -9,7 +9,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.domain.DeliveryRequest;
+import com.nsidetech.tictac.domain.Delivery;
 import com.nsidetech.tictac.util.DeliveryConstants;
 
 import java.util.List;
@@ -18,16 +18,15 @@ import java.util.List;
  * Created by fabrice on 2017-05-29.
  */
 
-public class MyDeliveriesAdapter extends ArrayAdapter<DeliveryRequest> {
+public class MyDeliveriesAdapter extends ArrayAdapter<Delivery> {
     private final Context context;
-    private final List<DeliveryRequest> deliveries;
+    private final List<Delivery> deliveries;
 
-    MyDeliveriesAdapter(Context context, List<DeliveryRequest> deliveries) {
+    MyDeliveriesAdapter(Context context, List<Delivery> deliveries) {
         super(context, R.layout.activity_my_deliveries_item, deliveries);
         this.context = context;
         this.deliveries = deliveries;
     }
-
 
     @NonNull
     @Override
@@ -36,7 +35,7 @@ public class MyDeliveriesAdapter extends ArrayAdapter<DeliveryRequest> {
 
         View rowView = inflater.inflate(R.layout.activity_my_deliveries_item, parent, false);
 
-        DeliveryRequest deliveryRequest = deliveries.get(position);
+        Delivery deliveryRequest = deliveries.get(position);
 
         TextView mReceiver = rowView.findViewById(R.id.lblReceiver);
         String receiver = mReceiver.getText().toString() + " " + deliveryRequest.getReceiverName();

@@ -19,7 +19,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.domain.DeliveryRequest;
+import com.nsidetech.tictac.domain.Delivery;
 import com.nsidetech.tictac.network.NetworkHelper;
 import com.nsidetech.tictac.util.DeliveryConstants;
 import com.nsidetech.tictac.util.DeviceManager;
@@ -30,7 +30,7 @@ import java.util.List;
 
 public class MyDeliveriesActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
-    private List<DeliveryRequest> deliveryRequests;
+    private List<Delivery> deliveryRequests;
 
     private FirebaseFirestore db;
     private static final String TAG = "MyDeliveriesActivity";
@@ -43,11 +43,11 @@ public class MyDeliveriesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_deliveries);
         SERVER_ERROR_MESSAGE = getResources().getString(R.string.serverError);
 
-        FirebaseApp.initializeApp(this);
-        db = FirebaseFirestore.getInstance();
-
         if (NetworkHelper.isOnline(this))
         {
+            FirebaseApp.initializeApp(this);
+            db = FirebaseFirestore.getInstance();
+
             deliveryRequests = new ArrayList<>();
             loadMyDeliveries();
         }
@@ -65,7 +65,8 @@ public class MyDeliveriesActivity extends AppCompatActivity {
         progressDialog.setMessage("Un moment...");
         progressDialog.show();
 
-        db.collection(DeliveryConstants.FIRESTORE_COLLECTION_NAME).whereEqualTo("deviceId", deviceId)
+        db.collection(DeliveryConstants.FIRESTORE_PRICES_COLLECTION_NAME)
+                .whereEqualTo("deviceId", deviceId)
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
@@ -84,8 +85,11 @@ public class MyDeliveriesActivity extends AppCompatActivity {
                                     Log.d(TAG, document.getId() + " => " + document.getData());
 
                                     final ObjectMapper mapper = new ObjectMapper();
-                                    final DeliveryRequest request = mapper.convertValue(document.getData(), DeliveryRequest.class);
-                                    deliveryRequests.add(request);
+                                    final Delivery request = mapper.convertValue(document.getData(), Delivery.class);
+                                    if (!request.getStatus().equals(DeliveryConstants.CANCELLED))
+                                    {
+                                        deliveryRequests.add(request);
+                                    }
                                 }
 
                                 initListView();
@@ -112,7 +116,7 @@ public class MyDeliveriesActivity extends AppCompatActivity {
         mDeliveries.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 // When clicked, open delivery details and user can finish his delivery
-                DeliveryRequest request = deliveryRequests.get(position);
+                Delivery request = deliveryRequests.get(position);
 
                 Intent intent = new Intent(getApplicationContext(), DeliveryDetailsActivity.class);
                 intent.putExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST, request);

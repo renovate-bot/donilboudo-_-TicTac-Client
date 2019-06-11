@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
@@ -64,7 +64,7 @@ public class MenuActivity extends AppCompatActivity {
             checkPermissions();
             if (hasReadPhonePermission)
             {
-                Intent intent = new Intent(getApplicationContext(), DeliveryRequestActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DeliveryDistanceActivity.class);
                 startActivityForResult(intent, REQUEST_SIGNUP);
             }
             else
@@ -211,19 +211,17 @@ public class MenuActivity extends AppCompatActivity {
     //call back for permission
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
-        switch (requestCode)
+        if (requestCode == MY_PERMISSIONS_REQUEST)
         {
-            case MY_PERMISSIONS_REQUEST:
+            if (grantResults.length > 0)
             {
-                if (grantResults.length > 0)
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
                 {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
-                    {
-                        hasReadPhonePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
-                    }
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
-                    {
-                        hasCallPermission =  grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    hasReadPhonePermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                }
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED)
+                {
+                    hasCallPermission = grantResults[0] == PackageManager.PERMISSION_GRANTED;
 //                        try
 //                        {
 //                            Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + tel));
@@ -233,13 +231,11 @@ public class MenuActivity extends AppCompatActivity {
 //                        {
 //                            AlertDialogUtil.showDialog(this, getResources().getString(R.string.callPermissionDeniedErrorMessage));
 //                        }
-
-                    }
                 }
-                else
-                {
-                    AlertDialogUtil.showDialog(this, getResources().getString(R.string.readPhonePermissionDeniedErrorMessage));
-                }
+            }
+            else
+            {
+                AlertDialogUtil.showDialog(this, getResources().getString(R.string.readPhonePermissionDeniedErrorMessage));
             }
         }
     }
