@@ -16,11 +16,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.domain.DeliveryRequest;
+import com.nsidetech.tictac.domain.Delivery;
 import com.nsidetech.tictac.util.DeliveryConstants;
-import com.nsidetech.tictac.util.DeviceManager;
 import com.nsidetech.tictac.util.MessageUtil;
 
 import java.text.SimpleDateFormat;
@@ -40,11 +40,10 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     private Button mCancelRequest;
     private ProgressBar mProgressBar;
 
-    private DeliveryRequest selectedDeliveryRequest;
+    private Delivery selectedDelivery;
 
     private SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.FRENCH);
 
-    private FirebaseFirestore db;
     private static final String TAG = "DeliveryDetailsActivity";
 
     @Override
@@ -52,12 +51,9 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delivery_details);
 
-        FirebaseApp.initializeApp(this);
-        db = FirebaseFirestore.getInstance();
-
         //get selected delivery in extra data
         Intent intent = getIntent();
-        selectedDeliveryRequest = (DeliveryRequest) intent.getSerializableExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST);
+        selectedDelivery = (Delivery) intent.getSerializableExtra(DeliveryConstants.SELECTED_DELIVERY_REQUEST);
 
         initViews();
 
@@ -85,7 +81,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     }
 
     private void fillInfo() {
-        String requestStatus = selectedDeliveryRequest.getStatus();
+        String requestStatus = selectedDelivery.getStatus();
         if (DeliveryConstants.WAITING_FOR_APPROVE.equals(requestStatus))
         {
             requestStatus = getResources().getString(R.string.waiting_for_approve);
@@ -104,7 +100,6 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         }
         mStatus.setText(requestStatus);
 
-<<<<<<< HEAD
         mSenderName.setText(selectedDelivery.getSenderName());
         mReceiverName.setText(selectedDelivery.getReceiverName());
 
@@ -118,16 +113,6 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             mDeliverNameLabel.setVisibility(View.VISIBLE);
             mDeliverName.setVisibility(View.VISIBLE);
             mDeliverName.setText(selectedDelivery.getDeliverer().getFullName());
-=======
-        mSenderName.setText(selectedDeliveryRequest.getSenderName());
-        mReceiverName.setText(selectedDeliveryRequest.getReceiverName());
-        mReceiverAddress.setText(selectedDeliveryRequest.getReceiverAddress());
-        if (selectedDeliveryRequest.getDeliverName() != null && !selectedDeliveryRequest.getDeliverName().contains("null"))
-        {
-            mDeliverNameLabel.setVisibility(View.VISIBLE);
-            mDeliverName.setVisibility(View.VISIBLE);
-            mDeliverName.setText(selectedDeliveryRequest.getDeliverName());
->>>>>>> parent of 033da52... refactoring
         }
         else
         {
@@ -135,7 +120,7 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
             mDeliverName.setVisibility(View.GONE);
         }
 
-        if (!selectedDeliveryRequest.getStatus().equals(DeliveryConstants.COMPLETED))
+        if (!selectedDelivery.getStatus().equals(DeliveryConstants.COMPLETED))
         {
             //hide elements
             mReceiveDateLabel.setVisibility(View.GONE);
@@ -145,23 +130,13 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
         {
             mReceiveDateLabel.setVisibility(View.VISIBLE);
             mReceiveDate.setVisibility(View.VISIBLE);
-<<<<<<< HEAD
             mReceiveDate.setText(selectedDelivery.getCompleteDate());
         }
 
         mDeliveryRequestDate.setText(selectedDelivery.getRequestDate());
         mRequestNumber.setText(selectedDelivery.getDeliveryNumber());
-=======
-            //String receiveDate = sdf.format(selectedDeliveryRequest.getReceiveDate());
-            mReceiveDate.setText(selectedDeliveryRequest.getReceiveDateStr());
-        }
 
-        //String requestDate = sdf.format(selectedDeliveryRequest.getRequestDate());
-        mDeliveryRequestDate.setText(selectedDeliveryRequest.getRequestDateStr());
-        mRequestNumber.setText(selectedDeliveryRequest.getRequestNumber());
->>>>>>> parent of 033da52... refactoring
-
-        if (!DeliveryConstants.WAITING_FOR_APPROVE.equals(selectedDeliveryRequest.getStatus()))
+        if (!DeliveryConstants.WAITING_FOR_APPROVE.equals(selectedDelivery.getStatus()))
         {
             mCancelRequest.setEnabled(false);
         }
@@ -201,18 +176,10 @@ public class DeliveryDetailsActivity extends AppCompatActivity {
     public void cancelRequest(View view) {
         showProgress(true);
 
-<<<<<<< HEAD
         FirebaseApp.initializeApp(this);
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         DocumentReference ref = db.collection(DeliveryConstants.FIRESTORE_DELIVERIES_COLLECTION_NAME).document(selectedDelivery.getId());
         ref.update("status", DeliveryConstants.CANCELLED)
-=======
-        String deviceId = DeviceManager.getInstance().getDeviceId(this);
-
-        db.collection(DeliveryConstants.FIRESTORE_COLLECTION_NAME)
-                .document(deviceId)
-                .update("status", DeliveryConstants.CANCELLED)
->>>>>>> parent of 033da52... refactoring
                 .addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

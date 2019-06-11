@@ -2,16 +2,13 @@ package com.nsidetech.tictac.activities;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.nsidetech.tictac.R;
-import com.nsidetech.tictac.database.DBManager;
 import com.nsidetech.tictac.notification.NotificationHelper;
 import com.nsidetech.tictac.util.DeviceManager;
-
-import java.util.UUID;
 
 public class SplashActivity extends AppCompatActivity {
     //Duration of wait
